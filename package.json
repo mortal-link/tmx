@@ -3,7 +3,7 @@
   "displayName": "TMX Map Preview",
   "description": "Preview Tiled Map Editor (.tmx) files directly in VS Code with canvas rendering, layer controls, zoom/pan, and tile inspection.",
   "version": "0.1.0",
-  "publisher": "mortal-link",
+  "publisher": "Moonlit",
   "license": "MIT",
   "icon": "media/icon.png",
   "repository": {
