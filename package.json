@@ -1,0 +1,68 @@
+{
+  "name": "vscode-tmx-preview",
+  "displayName": "TMX Map Preview",
+  "description": "Preview Tiled Map Editor (.tmx) files directly in VS Code with canvas rendering, layer controls, zoom/pan, and tile inspection.",
+  "version": "0.1.0",
+  "publisher": "mortal-link",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mortal-link/tmx"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "tiled",
+    "tmx",
+    "tilemap",
+    "map",
+    "preview",
+    "game",
+    "pixel"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "tmxPreview.editor",
+        "displayName": "TMX Map Preview",
+        "selector": [
+          {
+            "filenamePattern": "*.tmx"
+          }
+        ],
+        "priority": "default"
+      }
+    ],
+    "configuration": {
+      "title": "TMX Preview",
+      "properties": {
+        "tmxPreview.tilesetSearchPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Additional directories to search for tileset images (absolute or relative to the TMX file)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.3.0"
+  }
+}
