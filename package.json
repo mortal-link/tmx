@@ -41,6 +41,20 @@
         "priority": "default"
       }
     ],
+    "commands": [
+      {
+        "command": "tmxPreview.open",
+        "title": "TMX: Open Preview to the Side"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "tmxPreview.open",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "resourceExtname == .tmx"
+      }
+    ],
     "configuration": {
       "title": "TMX Preview",
       "properties": {

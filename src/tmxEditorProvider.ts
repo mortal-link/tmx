@@ -64,11 +64,22 @@ export class TmxEditorProvider implements vscode.CustomReadonlyEditorProvider {
     } catch (err) {
       webviewPanel.webview.html = `<!DOCTYPE html>
 <html><body style="background:#1e1e1e;color:#f44;padding:20px;font-family:monospace;">
-<h2>TMX Preview Error</h2><pre>${this.escapeHtml(String(err))}</pre></body></html>`;
+<h2>TMX Preview Error</h2><pre>${TmxEditorProvider.escapeHtml(String(err))}</pre></body></html>`;
       return;
     }
 
-    webviewPanel.webview.html = this.getHtml(webviewPanel.webview, tmxMap, tilesetImages);
+    webviewPanel.webview.html = TmxEditorProvider.getHtmlStatic(
+      webviewPanel.webview, this.context, tmxMap, tilesetImages
+    );
+
+    // Handle messages from webview
+    webviewPanel.webview.onDidReceiveMessage((msg) => {
+      if (msg.type === 'viewSource') {
+        vscode.commands.executeCommand(
+          'vscode.openWith', document.uri, 'default'
+        );
+      }
+    });
 
     const watcher = vscode.workspace.createFileSystemWatcher(
       new vscode.RelativePattern(tmxDir, path.basename(document.uri.fsPath))
@@ -142,21 +153,22 @@ export class TmxEditorProvider implements vscode.CustomReadonlyEditorProvider {
     return null;
   }
 
-  private escapeHtml(str: string): string {
+  public static escapeHtml(str: string): string {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  private escapeAttr(str: string): string {
+  private static escapeAttr(str: string): string {
     return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  private getHtml(
+  public static getHtmlStatic(
     webview: vscode.Webview,
+    context: vscode.ExtensionContext,
     map: TmxMap,
     tilesetImages: Record<string, string>
   ): string {
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.context.extensionUri, 'media', 'webview.js')
+      vscode.Uri.joinPath(context.extensionUri, 'media', 'webview.js')
     );
     const cspSource = webview.cspSource;
 
@@ -221,6 +233,8 @@ export class TmxEditorProvider implements vscode.CustomReadonlyEditorProvider {
     <button id="btn-fit" title="Fit to window (0)">Fit</button>
     <div class="sep"></div>
     <span class="label" id="zoom-label">100%</span>
+    <div style="flex:1"></div>
+    <button id="btn-source" title="View XML source">&lt;/&gt; Source</button>
   </div>
   <div id="canvas-container">
     <canvas id="map-canvas"></canvas>
@@ -230,7 +244,7 @@ export class TmxEditorProvider implements vscode.CustomReadonlyEditorProvider {
     <span id="info-tile"></span>
     <span id="info-gid"></span>
   </div>
-  <div id="map-data" style="display:none;" data-map="${this.escapeAttr(JSON.stringify(map))}" data-images="${this.escapeAttr(JSON.stringify(tilesetImages))}"></div>
+  <div id="map-data" style="display:none;" data-map="${TmxEditorProvider.escapeAttr(JSON.stringify(map))}" data-images="${TmxEditorProvider.escapeAttr(JSON.stringify(tilesetImages))}"></div>
   <script src="${scriptUri}"></script>
 </body>
 </html>`;

@@ -263,6 +263,10 @@
 
     btnFit.addEventListener('click', function () { fitToWindow(); render(); });
 
+    document.getElementById('btn-source').addEventListener('click', function () {
+      vscode.postMessage({ type: 'viewSource' });
+    });
+
     new ResizeObserver(function () { render(); }).observe(container);
 
     window.addEventListener('message', function (e) {
